@@ -1,0 +1,18 @@
+#
+# SE Mod Builder project configuration file
+#
+
+# All variables have defaults. If the default isn't correct, provide it below.
+# All paths are resolved relative to project root.
+
+# project_name: 'project_root_dirname'
+# steam_audio_dir: 'Audio'
+# steam_data_dir: 'Data'
+# steam_models_dir: 'Models'
+# steam_scripts_dir: 'Scripts/Steam'
+# steam_textures_dir: 'Textures'
+# vs_props_dir: 'Scripts/Properties'
+# vs_version_filename: 'VersionInfo.cs'
+# vs_revision_filename: 'VersionInfo - User.cs'
+
+vs_props_dir: 'Properties'

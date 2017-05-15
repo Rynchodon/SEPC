@@ -1,0 +1,20 @@
+{
+  "author": "Rynchodon",
+  "files": [
+    {
+      "source": "SEPC.dll"
+    },
+	{
+      "source": "README.md"
+    },
+	{
+      "source": "LICENSE.txt"
+    },
+  ],
+  "release": {
+    "body": "Initial content",
+    "draft": true,
+    "prerelease": true
+  },
+  "repository": "SEPC",
+}
