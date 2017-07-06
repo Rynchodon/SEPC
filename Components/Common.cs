@@ -11,6 +11,12 @@ namespace SEPC.Components
         Both = Client | Server
     }
 
+    public enum RunStatus : byte {
+        NotInitialized,
+        Initialized,
+        Terminated
+    }
+
     /// <summary>
     /// A set of basic component event names.
     /// Can be easily extended by other Assemblies, because component event names are simple strings.

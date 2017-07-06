@@ -21,11 +21,9 @@ namespace SEPC.Components
     /// </summary>
     public class ComponentSession
     {
-        private enum SessionStatus : byte { NotInitialized, Initialized, Terminated }
-
         private static ComponentCollectionStore ComponentStore;
         private static LockedDeque<Action> ExternalRegistrations;
-        private static SessionStatus Status;
+        private static RunStatus Status;
 
         #region Registration and event raising
 
@@ -89,7 +87,7 @@ namespace SEPC.Components
         public static void Open()
         {
             Logger.DebugLog("Components.Session.SessionOpened()");
-            Status = SessionStatus.NotInitialized;
+            Status = RunStatus.NotInitialized;
         }
 
         /// <summary>
@@ -100,10 +98,10 @@ namespace SEPC.Components
         {
             try
             {
-                if (Status == SessionStatus.Terminated)
+                if (Status == RunStatus.Terminated)
                     return;
 
-                if (Status == SessionStatus.NotInitialized)
+                if (Status == RunStatus.NotInitialized)
                 {
                     TryInitialize();
                     return;
@@ -117,7 +115,7 @@ namespace SEPC.Components
             catch (Exception error)
             {
                 Logger.Log("Error: " + error, Severity.Level.FATAL);
-                Status = SessionStatus.Terminated;
+                Status = RunStatus.Terminated;
             }
         }
 
@@ -138,7 +136,7 @@ namespace SEPC.Components
             ComponentStore = null;
             ExternalRegistrations = null;
 
-            Status = SessionStatus.Terminated;
+            Status = RunStatus.Terminated;
         }
 
         private static void TryInitialize()
@@ -166,7 +164,7 @@ namespace SEPC.Components
             foreach (var collection in ComponentRegistrar.GetInitComponents())
                 ComponentStore.TryAddCollection(collection);
 
-            Status = SessionStatus.Initialized;
+            Status = RunStatus.Initialized;
         }
 
         #endregion
