@@ -6,20 +6,38 @@ using SEPC.Logging;
 
 namespace SEPC.World
 {
-    [IsSessionComponent(isStatic: true, order: int.MinValue)]
-    public static class Time
+    [IsSessionComponent]
+    public class Updates
     {
 
         //public const int UPDATES_PER_SECOND = 60;
         //public const float SECONDS_PER_UPDATE = 1f / UPDATES_PER_SECOND;
         //public const double TICKS_PER_UPDATE = (double)TimeSpan.TicksPerSecond / (double)UPDATES_PER_SECOND;
 
-        private static long UpdatesStartedAt;
-        private static long UpdatesStoppedAt;
+        public static Updates Static;
 
-        public static long UpdateTicks
+        private long Received;
+        private long StartedAt = Stopwatch.GetTimestamp();
+        private long StoppedAt;
+
+        public Updates()
         {
-            get { return Stopwatch.GetTimestamp() - UpdatesStartedAt; }
+            Static = this;
+        }
+
+        public long UpdateTicks
+        {
+            get {
+
+                long result = (StoppedAt != 0) ? StoppedAt - StartedAt : Stopwatch.GetTimestamp() - StartedAt;
+                //Logger.Log("World.Time.UpdateTime: " + result / Stopwatch.Frequency);
+                return result;
+            }
+        }
+
+        public long UpdatesReceived
+        {
+            get { return Received; }
         }
 
         //public static bool WorldClosed;
@@ -35,21 +53,11 @@ namespace SEPC.World
         //    get { return new TimeSpan((long)(UpdatesReceived * TICKS_PER_UPDATE)); }
         //}
 
-        [OnStaticSessionComponentInit]
-        private static void SessionOpened()
-        {
-            Logger.Log("");
-            UpdatesStartedAt = Stopwatch.GetTimestamp();
-            //LastUpdateAt = StartedAt = Stopwatch.GetTimestamp();
-            //UpdatesReceived = 0;
-            //WorldClosed = false;
-        }
-
         [OnSessionUpdate]
-        public static void Update()
+        private void Update()
         {
+            Received++;
             //LastUpdateAt = Stopwatch.GetTimestamp();
-            //UpdatesReceived++;
             //float instantSimSpeed = UpdateDuration / (float)(DateTime.UtcNow - LastUpdateAt).TotalSeconds;
             //if (instantSimSpeed > 0.01f && instantSimSpeed < 1.1f)
             //    SimSpeed = SimSpeed * 0.9f + instantSimSpeed * 0.1f;
@@ -57,10 +65,10 @@ namespace SEPC.World
         }
 
         [OnSessionEvent(ComponentEventNames.UpdatingStopped)]
-        public static void UpdatingStopped()
+        private void UpdatingStopped()
         {
-            Logger.Log("");
-            UpdatesStoppedAt = Stopwatch.GetTimestamp();
+            StoppedAt = Stopwatch.GetTimestamp();
+            //Logger.Log("World.Time.UpdatingStopped() at " + UpdatesStoppedAt / Stopwatch.Frequency);
             //LastUpdateAt = Stopwatch.GetTimestamp();
             //UpdatesReceived++;
             //float instantSimSpeed = UpdateDuration / (float)(DateTime.UtcNow - LastUpdateAt).TotalSeconds;
@@ -70,11 +78,15 @@ namespace SEPC.World
         }
 
         [OnSessionEvent(ComponentEventNames.UpdatingResumed)]
-        public static void UpdatingResumed()
+        private void UpdatingResumed()
         {
-            Logger.Log("");
-            long prevDuration = UpdatesStoppedAt - UpdatesStartedAt;
-            UpdatesStartedAt = Stopwatch.GetTimestamp() - prevDuration;
+            var resumedAt = Stopwatch.GetTimestamp();
+            //Logger.Log("World.Time.UpdatingResumed() at " + resumedAt / Stopwatch.Frequency);
+            long prevDuration = StoppedAt - StartedAt;
+            //Logger.Log("prevDuration: " + prevDuration / Stopwatch.Frequency);
+            StartedAt = Stopwatch.GetTimestamp() - prevDuration;
+            //Logger.Log("New UpdatesStartedAt: " + UpdatesStartedAt / Stopwatch.Frequency);
+            StoppedAt = 0;
             //LastUpdateAt = Stopwatch.GetTimestamp();
             //UpdatesReceived++;
             //float instantSimSpeed = UpdateDuration / (float)(DateTime.UtcNow - LastUpdateAt).TotalSeconds;
@@ -84,7 +96,7 @@ namespace SEPC.World
         }
 
         [OnSessionClose(order: int.MaxValue)]
-        private static void SessionClosed()
+        private void SessionClosed()
         {
             Logger.Log("");
             //LastUpdateAt = ClosedAt = Stopwatch.GetTimestamp();

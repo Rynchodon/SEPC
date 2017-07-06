@@ -29,17 +29,24 @@ namespace SEPC.Diagnostics
             public string ProfiledMemberName, ProfiledFilePath; // identifies the profiled location
             public long StartedAt; // the entire reason the block exists
 
-            public string ProfiledId
+            public string Id
             {
-                get { return Path.GetFileName(ProfiledFilePath) + ',' + ProfiledMemberName; }
+                get { return Path.GetFileName(ProfiledFilePath) + '/' + ProfiledMemberName; }
             }
         }
 
         private class BlockResult
         {
             public long Invokes;
-            public MyTimeSpan TimeSpent = MyTimeSpan.Zero;
-            public MyTimeSpan WorstTime = MyTimeSpan.Zero;
+            public readonly string ProfiledMemberName, ProfiledFilePath;
+            public MyTimeSpan TimeSpent = new MyTimeSpan();
+            public MyTimeSpan WorstTime = new MyTimeSpan();
+
+            public BlockResult(string profiledFilePath, string profiledMemberName)
+            {
+                ProfiledFilePath = profiledFilePath;
+                ProfiledMemberName = profiledMemberName;
+            }
 
             public void BlockClosed(MyTimeSpan timeSpent, bool addTimeSpent = true)
             {
@@ -52,7 +59,21 @@ namespace SEPC.Diagnostics
 
             public string ToCSV(double totalProfileTicks, double totalUpdateTicks)
             {
-                return String.Join(",",
+                /*
+                Logger.DebugLog($"ProfiledFilePath: {ProfiledFilePath}, ProfiledMemberName: {ProfiledMemberName}, TimeSpent.Seconds: {TimeSpent.Seconds}");
+                Logger.DebugLog(String.Join(",",
+                    ProfiledFilePath,
+                    ProfiledMemberName,
+                    TimeSpent.Seconds
+                ));
+                Logger.DebugLog(String.Join(",",
+                    ProfiledFilePath,
+                    TimeSpent.Seconds
+                ));
+                */
+                string result = String.Join(",",
+                    ProfiledFilePath,
+                    ProfiledMemberName,
                     TimeSpent.Seconds,
                     Invokes,
                     TimeSpent.Seconds / Invokes,
@@ -60,6 +81,8 @@ namespace SEPC.Diagnostics
                     TimeSpent.Ticks / totalProfileTicks,
                     TimeSpent.Ticks / totalUpdateTicks
                 );
+                //Logger.DebugLog("result: " + result);
+                return result;
             }
         }
 
@@ -67,7 +90,7 @@ namespace SEPC.Diagnostics
         {
             private readonly Assembly Assembly;
             private readonly Dictionary<string, BlockResult> ResultsByName = new Dictionary<string, BlockResult>();
-            private readonly BlockResult ResultsTotal = new BlockResult();
+            private readonly BlockResult ResultsTotal = new BlockResult("Profile Totals", "");
             private readonly FastResourceLock ResultsLock = new FastResourceLock();
 
             public ModProfiler(Assembly assembly)
@@ -80,10 +103,10 @@ namespace SEPC.Diagnostics
                 using (ResultsLock.AcquireExclusiveUsing())
                 {
                     BlockResult blockResult;
-                    if (!ResultsByName.TryGetValue(block.ProfiledId, out blockResult))
+                    if (!ResultsByName.TryGetValue(block.Id, out blockResult))
                     {
-                        blockResult = new BlockResult();
-                        ResultsByName.Add(block.ProfiledId, blockResult);
+                        blockResult = new BlockResult(block.ProfiledFilePath, block.ProfiledMemberName);
+                        ResultsByName.Add(block.Id, blockResult);
                     }
                     blockResult.BlockClosed(timeSpent);
                     ResultsTotal.BlockClosed(timeSpent, addTimeSpent: lastBlockOfStack);
@@ -92,25 +115,24 @@ namespace SEPC.Diagnostics
 
             public void Write()
             {
-                using (TextWriter writer = new ModFile("Profiler", "csv", Assembly, 10).GetTextWriter())
+                using (TextWriter writer = new ModFile("profile", "csv", Assembly, 10).GetTextWriter())
                 {
                     using (ResultsLock.AcquireExclusiveUsing())
                     {
                         var profileTicks = ResultsTotal.TimeSpent.Ticks;
-                        var updateTicks = Time.UpdateTicks;
+                        var updateTicks = Updates.Static.UpdateTicks;
+                        var updateTotals = new BlockResult("Update Totals", "") {
+                            Invokes = Updates.Static.UpdatesReceived,
+                            TimeSpent = new MyTimeSpan(updateTicks)
+                        };
 
-                        writer.WriteLine("Class Name, Method Name, Seconds, Invokes, Seconds per Invoke, Worst Time, Ratio of Sum, Ratio of Game Time");
-                        WriteRow(writer, "Game Time,", new BlockResult() { TimeSpent = new MyTimeSpan(updateTicks) }, profileTicks, updateTicks);
-                        WriteRow(writer, "Sum,", ResultsTotal, profileTicks, updateTicks);
+                        writer.WriteLine("Class Name, Method Name, Seconds, Invokes, Seconds per Invoke, Worst Time, Ratio of Profile Time, Ratio of Update Time");
+                        writer.WriteLine(updateTotals.ToCSV(profileTicks, updateTicks));
+                        writer.WriteLine(ResultsTotal.ToCSV(profileTicks, updateTicks));
                         foreach (var pair in ResultsByName)
-                            WriteRow(writer, pair.Key, pair.Value, profileTicks, updateTicks);
+                            writer.WriteLine(pair.Value.ToCSV(profileTicks, updateTicks));
                     }
                 }
-            }
-
-            private static void WriteRow(TextWriter writer, string blockName, BlockResult result, double totalProfileTicks, double totalUpdateTicks)
-            {
-                writer.WriteLine(blockName + "," + result.ToCSV(totalProfileTicks, totalUpdateTicks));
             }
         }
 
@@ -161,7 +183,7 @@ namespace SEPC.Diagnostics
             [CallerMemberName] string callerMemberName = null, [CallerFilePath] string callerFilePath = null)
         {
             callerAssembly = (callerAssembly != null) ? callerAssembly : Assembly.GetCallingAssembly();
-            StartProfileBlock(callerAssembly, callerMemberName, callerFilePath, action.Method.Name, action.Target == null ? "N/A" : action.Target.GetType().Name);
+            StartProfileBlock(callerAssembly, callerMemberName, callerFilePath, action.Method?.Name, action.Method?.DeclaringType.FullName);
         }
 
         /// <summary>
@@ -179,7 +201,7 @@ namespace SEPC.Diagnostics
             {
                 Logger.Log("BlockStack is too large:");
                 foreach (var item in BlockStack)
-                    Logger.Log("Item: " + item.ProfiledId, Severity.Level.ERROR);
+                    Logger.Log("Item: " + item.Id, Severity.Level.ERROR);
                 throw new OverflowException("BlockStack is too large.");
             }
 

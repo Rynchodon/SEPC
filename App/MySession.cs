@@ -50,7 +50,7 @@ namespace SEPC.App
         {
             base.UpdatingStopped();
             Logger.Log("App.MySession.UpdatingStopped()");
-            ComponentSession.RaiseSessionEvent(ComponentEventNames.UpdatingStopped);
+            ComponentSession.RaiseSessionEventImmediately(ComponentEventNames.UpdatingStopped);
             IsUpdatingStopped = true;
         }
 
@@ -58,7 +58,7 @@ namespace SEPC.App
         {
             base.SaveData();
             Logger.Log("App.MySession.SaveData()");
-            ComponentSession.RaiseSessionEvent(ComponentEventNames.SessionSave);
+            ComponentSession.RaiseSessionEventImmediately(ComponentEventNames.SessionSave);
         }
 
         #endregion

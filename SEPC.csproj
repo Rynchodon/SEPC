@@ -114,7 +114,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="World\Time.cs" />
+    <Compile Include="World\Updates.cs" />
     <Compile Include="Collections\Deque.cs" />
     <Compile Include="Collections\LockedDictionary.cs" />
     <Compile Include="Components\Attributes.cs" />

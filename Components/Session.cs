@@ -27,7 +27,7 @@ namespace SEPC.Components
         private static LockedDeque<Action> ExternalRegistrations;
         private static SessionStatus Status;
 
-        #region Thread-safe registration and event raising
+        #region Registration and event raising
 
         /// <param name="unregisterOnClosing">Leave as null if you plan on manually unregistering</param>
         public static void RegisterUpdateHandler(uint frequency, Action toInvoke, IMyEntity unregisterOnClosing = null)
@@ -60,6 +60,16 @@ namespace SEPC.Components
             ExternalRegistrations?.AddTail(() => {
                 ComponentStore.RaiseSessionEvent(eventName); ;
             });
+        }
+
+        /// <summary>
+        /// NOT thread-safe, but allows us to immediately raise an event instead of deferring it to the next frame.
+        /// This is useful for events that would be propagated too late if delayed til the next frame, like UpdatingStopped (next frame comes after UpdatingResumed).
+        /// </summary>
+        /// <param name="eventName"></param>
+        public static void RaiseSessionEventImmediately(string eventName)
+        {
+            ComponentStore.RaiseSessionEvent(eventName);
         }
 
         public static void RaiseEntityEvent(string eventName, IMyEntity entity)
