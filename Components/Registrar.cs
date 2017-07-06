@@ -1,9 +1,10 @@
-using SEPC.Components.Descriptions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+
+using SEPC.Components.Descriptions;
+using SEPC.Logging;
 
 namespace SEPC.Components
 {
@@ -25,6 +26,7 @@ namespace SEPC.Components
         /// </summary>
         public static void LoadOnInit(int groupId)
         {
+            Logger.DebugLog($"LoadOnInit group: {groupId}, assembly: {Assembly.GetCallingAssembly().GetName().FullName}");
             InitGroupsByAssembly[Assembly.GetCallingAssembly()] = groupId;
         }
 
@@ -49,6 +51,7 @@ namespace SEPC.Components
         /// </summary>
         public static ComponentDescriptionCollection GetComponents(Assembly assembly, int groupId)
         {
+            Logger.DebugLog($"GetComponents group: {groupId}, assembly: {assembly.GetName().FullName}");
             ComponentDescriptionCollection components;
             if (!ComponentsByAssembly.TryGetValue(assembly, out components))
                 throw new Exception("No components registered for " + assembly.GetName().Name);
