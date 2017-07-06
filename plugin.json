@@ -12,7 +12,7 @@
     },
   ],
   "release": {
-    "body": "Introduced logging and logic components.",
+    "body": "Fix for IPlugin calling assembly is PluginLoader when registering components.",
     "draft": false,
     "prerelease": false
   },
