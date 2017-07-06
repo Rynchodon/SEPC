@@ -107,6 +107,11 @@ namespace SEPC.Logging
             LogWithContext(toLog, level, condition, filePath, member, lineNumber);
         }
 
+        public void ErrorLog(string toLog, bool condition = true, [CallerFilePath] string filePath = null, [CallerMemberName] string member = null, [CallerLineNumber] int lineNumber = 0)
+        {
+            LogWithContext(toLog, Severity.Level.ERROR, condition, filePath, member, lineNumber);
+        }
+
         [Conditional("TRACE")]
         public void Entered([CallerFilePath] string filePath = null, [CallerMemberName] string member = null, [CallerLineNumber] int lineNumber = 0)
         {
