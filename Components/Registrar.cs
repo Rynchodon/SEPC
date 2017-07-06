@@ -28,8 +28,8 @@ namespace SEPC.Components
         public static void LoadOnInit(int groupId, Assembly assembly = null)
         {
             assembly = (assembly != null) ? assembly : Assembly.GetCallingAssembly();
-            Logger.Log($"LoadOnInit group: {groupId}, assembly: {Assembly.GetCallingAssembly().GetName().FullName}");
-            InitGroupsByAssembly[Assembly.GetCallingAssembly()] = groupId;
+            Logger.Log($"LoadOnInit group: {groupId}, assembly: {assembly.GetName().FullName}");
+            InitGroupsByAssembly[assembly] = groupId;
         }
 
         /// <summary>
