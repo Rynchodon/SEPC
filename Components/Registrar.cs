@@ -21,22 +21,26 @@ namespace SEPC.Components
         #region Registration
 
         /// <summary>
-        /// Defines a particular group to load from the calling assembly when the session starts.
+        /// Defines a particular group to load from the given assembly when the session starts.
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
+        /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
         /// </summary>
-        public static void LoadOnInit(int groupId)
+        public static void LoadOnInit(int groupId, Assembly assembly = null)
         {
-            Logger.DebugLog($"LoadOnInit group: {groupId}, assembly: {Assembly.GetCallingAssembly().GetName().FullName}");
+            assembly = (assembly != null) ? assembly : Assembly.GetCallingAssembly();
+            Logger.Log($"LoadOnInit group: {groupId}, assembly: {Assembly.GetCallingAssembly().GetName().FullName}");
             InitGroupsByAssembly[Assembly.GetCallingAssembly()] = groupId;
         }
 
         /// <summary>
-        /// Defines all the components within the calling assembly and stores them for use within a session.
+        /// Defines all the components within the given assembly and stores them for use within a session.
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
+        /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
         /// </summary>
-        public static void AddComponents()
+        public static void AddComponents(Assembly assembly = null)
         {
-            var assembly = Assembly.GetCallingAssembly();
+            assembly = (assembly != null) ? assembly : Assembly.GetCallingAssembly();
+            Logger.Log($"AddComponents assembly: {assembly.GetName().FullName}");
             var collection = ComponentDescriptionCollection.FromAssembly(assembly);
             ComponentsByAssembly.Add(assembly, collection);
         }
@@ -51,7 +55,7 @@ namespace SEPC.Components
         /// </summary>
         public static ComponentDescriptionCollection GetComponents(Assembly assembly, int groupId)
         {
-            Logger.DebugLog($"GetComponents group: {groupId}, assembly: {assembly.GetName().FullName}");
+            Logger.Log($"GetComponents group: {groupId}, assembly: {assembly.GetName().FullName}");
             ComponentDescriptionCollection components;
             if (!ComponentsByAssembly.TryGetValue(assembly, out components))
                 throw new Exception("No components registered for " + assembly.GetName().Name);

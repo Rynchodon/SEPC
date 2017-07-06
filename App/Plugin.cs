@@ -35,9 +35,9 @@ namespace SEPC.App
 
             Logger.DebugLog("SEPC.Plugin.Init()");
 
-			// Register our SEPC-managed SessionComponents
-			ComponentRegistrar.AddComponents();
-			ComponentRegistrar.LoadOnInit(0);
+            // Register our SEPC-managed SessionComponents
+            ComponentRegistrar.AddComponents(Assembly.GetExecutingAssembly());
+            ComponentRegistrar.LoadOnInit(0, Assembly.GetExecutingAssembly());
         }
 
         public void Update()
