@@ -12,9 +12,9 @@
     },
   ],
   "release": {
-    "body": "Initial content",
-    "draft": true,
-    "prerelease": true
+    "body": "Introduced logging and logic components.",
+    "draft": false,
+    "prerelease": false
   },
   "repository": "SEPC",
 }
