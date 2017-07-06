@@ -114,6 +114,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Reflection\Helper.cs" />
     <Compile Include="World\Updates.cs" />
     <Compile Include="Collections\Deque.cs" />
     <Compile Include="Collections\LockedDictionary.cs" />
