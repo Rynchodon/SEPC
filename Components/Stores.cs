@@ -14,6 +14,8 @@ namespace SEPC.Components.Stores
 {
     public abstract class ComponentStore
     {
+        protected static Logable Log = new Logable("SEPC.Components.Stores");
+
         protected HashSet<ComponentDescription> Components = new HashSet<ComponentDescription>();
         protected readonly RunLocation RunningOn;
         protected Dictionary<uint, HashSet<ComponentEventAction>> SharedUpdateRegistry;
@@ -55,7 +57,7 @@ namespace SEPC.Components.Stores
 
         public void AddComponent(EntityComponentDescription<TEntity> component)
         {
-            //Logger.AlwaysLog($"{component}", Logger.severity.TRACE);
+            //Log.Trace($"{component}");
             if (component.ShouldRunOn(RunningOn) && Components.Add(component))
                 foreach (var entity in ComponentInstancesByEntity.Keys)
                     AddComponentInstance(component, entity);
@@ -63,13 +65,13 @@ namespace SEPC.Components.Stores
 
         public void AddEntity(TEntity entity)
         {
-            //Logger.AlwaysLog($"{entity.nameWithId()}", Logger.severity.TRACE);
+            //Log.Trace($"{entity.nameWithId()}");
             if (ComponentInstancesByEntity.Keys.Contains(entity))
             {
                 if (typeof(TEntity) == typeof(IMyCubeBlock))
                     RaiseEvent(ComponentEventNames.BlockGridChange, entity);
                 else
-                    Logger.Log($"Already added {entity.NameWithId()}.", Severity.Level.ERROR);
+                    Log.Error($"Already added {entity.NameWithId()}.");
                 return;
             }
 
@@ -80,10 +82,10 @@ namespace SEPC.Components.Stores
 
         public void RemoveEntity(TEntity entity)
         {
-            //Logger.AlwaysLog($"{entity.nameWithId()}", Logger.severity.TRACE);
+            //Log.Trace($"{entity.nameWithId()}");
             if (!ComponentInstancesByEntity.Keys.Contains(entity))
             {
-                Logger.Log($"Never received {entity.NameWithId()}.", Severity.Level.ERROR);
+                Log.Error($"Never received {entity.NameWithId()}.");
                 return;
             }
 
@@ -99,7 +101,7 @@ namespace SEPC.Components.Stores
 
         public void RaiseEvent(string eventName, TEntity entity)
         {
-            Logger.Log($"{eventName}, {entity.NameWithId()}", Severity.Level.TRACE);
+            Log.Trace($"{eventName}, {entity.NameWithId()}");
             List<ComponentInstanceDescription> instances;
             if (ComponentInstancesByEntity.TryGetValue(entity, out instances))
                 foreach (var component in instances)
@@ -113,7 +115,7 @@ namespace SEPC.Components.Stores
                 return;
 
             if (component.Debug)
-                Logger.Log($"Adding component {component} for entity {entity.NameWithId()}", Severity.Level.DEBUG);
+                Log.Log($"Adding component {component} for entity {entity.NameWithId()}", Severity.Level.DEBUG);
 
             //List<ComponentInstanceDescription> instances;
             //if (!ComponentInstancesByEntity.TryGetValue(entity, out instances))
@@ -141,12 +143,12 @@ namespace SEPC.Components.Stores
 
         public void AddComponent(SessionComponentDescription component)
         {
-            //Logger.AlwaysLog($"{component}", Logger.severity.TRACE);
+            //Log.Trace($"{component}");
             if (!component.ShouldRunOn(RunningOn) || !Components.Add(component))
                 return;
 
             if (component.Debug)
-                Logger.Log($"Adding component {component}", Severity.Level.DEBUG);
+                Log.Log($"Adding component {component}", Severity.Level.DEBUG);
 
             ComponentInstanceDescription instance;
             if (!component.TryCreateInstance(RunningOn, null, out instance))
@@ -163,7 +165,7 @@ namespace SEPC.Components.Stores
 
         public void RaiseEvent(string eventName)
         {
-            //Logger.AlwaysLog($"{eventName}", Logger.severity.TRACE);
+            //Log.Trace($"{eventName}");
             SortedDictionary<int, List<ComponentEventAction>> handlersByOrder;
             if (SessionEventRegistry.TryGetValue(eventName, out handlersByOrder))
                 foreach (var kvp in handlersByOrder)
@@ -172,7 +174,7 @@ namespace SEPC.Components.Stores
 
         private void AddToSessionEventRegistry(ComponentEventAction handler)
         {
-            //Logger.AlwaysLog($"{handler}", Logger.severity.TRACE);
+            //Log.Trace($"{handler}");
             SortedDictionary<int, List<ComponentEventAction>> eventHandlersByOrder;
             if (!SessionEventRegistry.TryGetValue(handler.EventName, out eventHandlersByOrder))
                 SessionEventRegistry[handler.EventName] = eventHandlersByOrder = new SortedDictionary<int, List<ComponentEventAction>>();
@@ -207,7 +209,7 @@ namespace SEPC.Components.Stores
 
         public void AddCollection(ComponentDescriptionCollection collection)
         {
-            Logger.DebugLog($"Adding components from {collection}", Severity.Level.DEBUG);
+            Log.Debug($"Adding components from {collection}");
 
             // Session components first
             foreach (var component in collection.SessionComponents)
@@ -233,20 +235,20 @@ namespace SEPC.Components.Stores
             }
             catch (Exception error)
             {
-                Logger.Log($"Failed to add collection: {collection}" + error, Severity.Level.ERROR);
+                Log.Error($"Failed to add collection: {collection}" + error);
             }
         }
 
         public void AddUpdateHandler(uint frequency, Action action, Assembly assembly)
         {
-            Logger.Log($"{frequency}", Severity.Level.TRACE);
+            Log.Debug($"{frequency}");
             var methodName = action.Method.DeclaringType.FullName + '.' + action.Method.Name;
             AddUpdateHandler(new ComponentEventAction(action, assembly, ComponentEventNames.Update, frequency, methodName, 0));
         }
 
         public void RemoveUpdateHandler(uint frequency, Action action)
         {
-            Logger.Log($"{frequency}", Severity.Level.TRACE);
+            Log.Debug($"{frequency}");
             HashSet<ComponentEventAction> handlers;
             if (SharedUpdateRegistry.TryGetValue(frequency, out handlers))
                 handlers.RemoveWhere(x => x.Action == action);
@@ -254,7 +256,7 @@ namespace SEPC.Components.Stores
 
         public void AddEntity(IMyEntity entity)
         {
-            //Logger.AlwaysLog($"{entity.nameWithId()}", Logger.severity.TRACE);
+            //Log.Trace($"{entity.nameWithId()}");
             var asBlock = entity as IMyCubeBlock;
             var asChar = entity as IMyCharacter;
             var asGrid = entity as IMyCubeGrid;
@@ -269,7 +271,7 @@ namespace SEPC.Components.Stores
 
         public void RemoveEntity(IMyEntity entity)
         {
-            //Logger.AlwaysLog($"{entity.nameWithId()}", Logger.severity.TRACE);
+            //Log.Trace($"{entity.nameWithId()}");
             var asBlock = entity as IMyCubeBlock;
             var asChar = entity as IMyCharacter;
             var asGrid = entity as IMyCubeGrid;
@@ -284,7 +286,7 @@ namespace SEPC.Components.Stores
 
         public void RaiseEntityEvent(string eventName, IMyEntity entity)
         {
-            Logger.Log($"{eventName}, {entity.NameWithId()}", Severity.Level.TRACE);
+            Log.Debug($"{eventName}, {entity.NameWithId()}");
             var asBlock = entity as IMyCubeBlock;
             var asChar = entity as IMyCharacter;
             var asGrid = entity as IMyCubeGrid;
@@ -299,7 +301,7 @@ namespace SEPC.Components.Stores
 
         public void RaiseSessionEvent(string eventName)
         {
-            Logger.Log($"{eventName}", Severity.Level.TRACE);
+            Log.Trace($"{eventName}");
             SessionStore.RaiseEvent(eventName);
         }
 

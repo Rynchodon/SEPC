@@ -103,11 +103,14 @@ namespace SEPC.Logging
         {
             Lock.AcquireExclusive();
 
-            Log("Closing log");
+            foreach (var assembly in ModLogs.Keys)
+                Log("Closing log", Severity.Level.INFO, "SEPC.Logging", assembly: assembly);
+
             WriteItems();
 
             foreach (ModLog modLog in ModLogs.Values)
                 modLog.Close();
+
             LogItems.Clear();
             ModLogs.Clear();
             StringCache.Clear();

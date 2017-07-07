@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Sandbox.ModAPI;
 using Sandbox.Game.World;
@@ -19,25 +20,35 @@ namespace SEPC.App
     /// </summary>
     public class Plugin : IPlugin
     {
+        private static Logable Log = new Logable("SEPC.App");
+
         private bool SessionAttached;
 
-        /// <summary>
-        /// Called when game starts
-        /// </summary>
+        /// <remarks>
+        /// Skips inlining so the registrars correctly detect calling assembly.
+        /// </remarks>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
         {
-            // Register our compilation symbol state
-            SymbolRegistrar.SetDebugIfDefined();
-            SymbolRegistrar.SetProfileIfDefined();
-
             // Set up resources that persist outside of sessions
             ThreadTracker.SetGameThread();
 
-            Logger.DebugLog("SEPC.Plugin.Init()");
+            Log.Entered();
 
-            // Register our SEPC-managed SessionComponents
-            ComponentRegistrar.AddComponents(Assembly.GetExecutingAssembly());
-            ComponentRegistrar.LoadOnInit(0, Assembly.GetExecutingAssembly());
+            try
+            {
+                // Register our compilation symbol state
+                SymbolRegistrar.SetDebugIfDefined();
+                SymbolRegistrar.SetProfileIfDefined();
+
+                // Register our SEPC-managed SessionComponents
+                ComponentRegistrar.AddComponents();
+                ComponentRegistrar.LoadOnInit(0);
+            }
+            catch (Exception error)
+            {
+                Log.Error(error);
+            }
         }
 
         public void Update()
@@ -47,12 +58,9 @@ namespace SEPC.App
                 TryAttachSession();
         }
 
-        /// <summary>
-        /// Called when game exits
-        /// </summary>
         public void Dispose()
         {
-            Logger.DebugLog("SEPC.Plugin.Dispose()");
+            Log.Entered();
 
             // Close resources that persist outside of sessions
             Profiler.Close();
@@ -64,7 +72,7 @@ namespace SEPC.App
             if (Sandbox.Game.World.MySession.Static == null || MyAPIGateway.Entities == null)
                 return;
 
-            Logger.DebugLog("Attaching MySession");
+            Log.Trace("Attaching MySession");
             Sandbox.Game.World.MySession.Static.RegisterComponentsFromAssembly(Assembly.GetExecutingAssembly(), true);
             MyAPIGateway.Entities.OnCloseAll += DetachSession;
             SessionAttached = true;
@@ -72,7 +80,7 @@ namespace SEPC.App
 
         private void DetachSession()
         {
-            Logger.DebugLog("Marking MySession detatched");
+            Log.Trace("Marking MySession detatched");
             MyAPIGateway.Entities.OnCloseAll -= DetachSession;
             SessionAttached = false;
         }

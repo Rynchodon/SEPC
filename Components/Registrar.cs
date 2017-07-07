@@ -15,6 +15,7 @@ namespace SEPC.Components
     /// </summary>
     public static class ComponentRegistrar
     {
+        private static readonly Logable Log = new Logable("SEPC.Components");
         private static readonly Dictionary<Assembly, ComponentDescriptionCollection> ComponentsByAssembly = new Dictionary<Assembly, ComponentDescriptionCollection>();
         private static readonly Dictionary<Assembly, int> InitGroupsByAssembly = new Dictionary<Assembly, int>();
 
@@ -25,10 +26,10 @@ namespace SEPC.Components
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
         /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
         /// </summary>
-        public static void LoadOnInit(int groupId, Assembly assembly = null)
+        public static void LoadOnInit(int groupId)
         {
-            assembly = (assembly != null) ? assembly : Assembly.GetCallingAssembly();
-            Logger.Log($"LoadOnInit group: {groupId}, assembly: {assembly.GetName().FullName}");
+            var assembly = Assembly.GetCallingAssembly();
+            Log.Debug($"LoadOnInit group: {groupId}, assembly: {assembly.GetName().FullName}");
             InitGroupsByAssembly[assembly] = groupId;
         }
 
@@ -37,10 +38,10 @@ namespace SEPC.Components
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
         /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
         /// </summary>
-        public static void AddComponents(Assembly assembly = null)
+        public static void AddComponents()
         {
-            assembly = (assembly != null) ? assembly : Assembly.GetCallingAssembly();
-            Logger.Log($"AddComponents assembly: {assembly.GetName().FullName}");
+            var assembly = Assembly.GetCallingAssembly();
+            Log.Debug($"AddComponents assembly: {assembly.GetName().FullName}");
             var collection = ComponentDescriptionCollection.FromAssembly(assembly);
             ComponentsByAssembly.Add(assembly, collection);
         }
@@ -55,7 +56,7 @@ namespace SEPC.Components
         /// </summary>
         public static ComponentDescriptionCollection GetComponents(Assembly assembly, int groupId)
         {
-            Logger.Log($"GetComponents group: {groupId}, assembly: {assembly.GetName().FullName}");
+            Log.Debug($"GetComponents group: {groupId}, assembly: {assembly.GetName().FullName}");
             ComponentDescriptionCollection components;
             if (!ComponentsByAssembly.TryGetValue(assembly, out components))
                 throw new Exception("No components registered for " + assembly.GetName().Name);

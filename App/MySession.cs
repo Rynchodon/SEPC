@@ -16,6 +16,8 @@ namespace SEPC.App
     [MySessionComponentDescriptor(MyUpdateOrder.AfterSimulation)]
     class MySession : MySessionComponentBase
     {
+        private static Logable Log = new Logable("SEPC.App");
+
         private bool SessionClosedAttached;
         private bool IsUpdatingStopped;
 
@@ -23,7 +25,7 @@ namespace SEPC.App
 
         public MySession() : base ()
         {
-            Logger.DebugLog("App.MySession.Ctr()");
+            Log.Entered();
 
             // Set up resources that persist inside sessions
             ComponentSession.Open();
@@ -38,7 +40,7 @@ namespace SEPC.App
 
             if (!SessionClosedAttached && MyAPIGateway.Entities != null)
             {
-                Logger.DebugLog("Attaching SessionClosed");
+                Log.Trace("Attaching SessionClosed");
                 MyAPIGateway.Entities.OnCloseAll += SessionClosed;
                 SessionClosedAttached = true;
             }
@@ -49,7 +51,7 @@ namespace SEPC.App
         public override void UpdatingStopped()
         {
             base.UpdatingStopped();
-            Logger.Log("App.MySession.UpdatingStopped()");
+            Log.Entered();
             ComponentSession.RaiseSessionEventImmediately(ComponentEventNames.UpdatingStopped);
             IsUpdatingStopped = true;
         }
@@ -57,7 +59,7 @@ namespace SEPC.App
         public override void SaveData()
         {
             base.SaveData();
-            Logger.Log("App.MySession.SaveData()");
+            Log.Entered();
             ComponentSession.RaiseSessionEventImmediately(ComponentEventNames.SessionSave);
         }
 
@@ -65,14 +67,14 @@ namespace SEPC.App
 
         private void UpdatingResumed()
         {
-            Logger.Log("App.MySession.UpdatingResumed()");
+            Log.Entered();
             ComponentSession.RaiseSessionEvent(ComponentEventNames.UpdatingResumed);
             IsUpdatingStopped = false;
         }
 
         private void SessionClosed()
         {
-            Logger.Log("App.MySession.SessionClosed()");
+            Log.Entered();
 
             // Close resources that persist inside sessions
             ComponentSession.Close();

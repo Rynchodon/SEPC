@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEPC", "SEPC.csproj", "{6DE0EC51-699A-4F9F-9217-4E50509196B9}"
 EndProject
@@ -9,6 +9,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Profile|Any CPU = Profile|Any CPU
+		Profile|x64 = Profile|x64
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
@@ -17,6 +19,9 @@ Global
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Debug|x64.ActiveCfg = Debug|x64
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Debug|x64.Build.0 = Debug|x64
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Debug|x64.Deploy.0 = Debug|x64
+		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Profile|Any CPU.ActiveCfg = Profile|x64
+		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Profile|x64.ActiveCfg = Profile|x64
+		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Profile|x64.Build.0 = Profile|x64
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Release|Any CPU.ActiveCfg = Release|x64
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Release|x64.ActiveCfg = Release|x64
 		{6DE0EC51-699A-4F9F-9217-4E50509196B9}.Release|x64.Build.0 = Release|x64

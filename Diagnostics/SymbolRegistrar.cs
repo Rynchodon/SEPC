@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-//using VRage.Utils;
+using VRage.Utils;
 
 namespace SEPC.Diagnostics
 {
@@ -22,8 +22,9 @@ namespace SEPC.Diagnostics
         [Conditional("DEBUG")]
         public static void SetDebugIfDefined()
         {
-            AssembliesToDebug.Add(Assembly.GetCallingAssembly());
-            //MyLog.Default.WriteLine($"SEPC - SetDebugIfDefined - {Assembly.GetCallingAssembly().GetName().Name}");
+            var assembly = Assembly.GetCallingAssembly();
+            MyLog.Default.WriteLine($"SEPC - SetDebugIfDefined - {assembly.GetName().Name}");
+            AssembliesToDebug.Add(assembly);
         }
 
         /// <summary>
@@ -32,19 +33,20 @@ namespace SEPC.Diagnostics
         [Conditional("PROFILE")]
         public static void SetProfileIfDefined()
         {
-            AssembliesToProfile.Add(Assembly.GetCallingAssembly());
-            //MyLog.Default.WriteLine($"SEPC - SetProfileIfDefined - {Assembly.GetCallingAssembly().GetName().Name}");
+            var assembly = Assembly.GetCallingAssembly();
+            MyLog.Default.WriteLine($"SEPC - SetProfileIfDefined - {assembly.GetName().Name}");
+            AssembliesToProfile.Add(assembly);
         }
 
         public static bool IsDebugDefined(Assembly assembly)
         {
-            //MyLog.Default.WriteLine($"AssembliesToDebug.Contains({assembly.GetName().Name}) ? {AssembliesToDebug.Contains(assembly)}");
+            MyLog.Default.WriteLine($"AssembliesToDebug.Contains({assembly.GetName().Name}) ? {AssembliesToDebug.Contains(assembly)}");
             return AssembliesToDebug.Contains(assembly);
         }
 
         public static bool IsProfileDefined(Assembly assembly)
         {
-            //MyLog.Default.WriteLine($"AssembliesToProfile.Contains({assembly.GetName().Name}) ? {AssembliesToProfile.Contains(assembly)}");
+            MyLog.Default.WriteLine($"AssembliesToProfile.Contains({assembly.GetName().Name}) ? {AssembliesToProfile.Contains(assembly)}");
             return AssembliesToProfile.Contains(assembly);
         }
     }
