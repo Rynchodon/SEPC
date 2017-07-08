@@ -12,7 +12,7 @@
     },
   ],
   "release": {
-    "body": "Fix for IPlugin calling assembly is PluginLoader when registering components.",
+    "body": "Reflection and logging fixes",
     "prerelease": false
   },
   "repository": "SEPC"
