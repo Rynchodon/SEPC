@@ -24,11 +24,13 @@ namespace SEPC.Components
         /// <summary>
         /// Defines a particular group to load from the given assembly when the session starts.
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
-        /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
+        /// Assembly should be determined with Assembly.GetExecutingAssembly().
         /// </summary>
-        public static void LoadOnInit(int groupId)
+        /// <remarks>
+        /// Assembly could default to CallingAssembly, but inlining and tail-recursion make it difficult to ensure that's coming from the right place.
+        /// </remarks>
+        public static void LoadOnInit(int groupId, Assembly assembly)
         {
-            var assembly = Assembly.GetCallingAssembly();
             Log.Debug($"LoadOnInit group: {groupId}, assembly: {assembly.GetName().FullName}");
             InitGroupsByAssembly[assembly] = groupId;
         }
@@ -36,11 +38,13 @@ namespace SEPC.Components
         /// <summary>
         /// Defines all the components within the given assembly and stores them for use within a session.
         /// Should be called once within game instance before a session is loaded, e.g. within IPlugin.Init().
-        /// Assembly defaults to CallingAssembly, but that's PluginLoader inside a released IPlugin so you usually must provide it.
+        /// Assembly should be determined with Assembly.GetExecutingAssembly().
         /// </summary>
-        public static void AddComponents()
+        /// <remarks>
+        /// Assembly could default to CallingAssembly, but inlining and tail-recursion make it difficult to ensure that's coming from the right place.
+        /// </remarks>
+        public static void AddComponents(Assembly assembly)
         {
-            var assembly = Assembly.GetCallingAssembly();
             Log.Debug($"AddComponents assembly: {assembly.GetName().FullName}");
             var collection = ComponentDescriptionCollection.FromAssembly(assembly);
             ComponentsByAssembly.Add(assembly, collection);

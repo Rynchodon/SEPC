@@ -5,6 +5,9 @@
       "source": "SEPC.dll"
     },
 	{
+      "source": "SEPC.xml"
+    },
+	{
       "source": "README.md"
     },
 	{
@@ -12,7 +15,10 @@
     },
   ],
   "release": {
-    "body": "Reflection and logging fixes",
+    "body_lines": [
+	  "Components registration must provide assembly to avoid tail recursion issues",
+	  "Includes library comments in SEPC.xml",
+	],
     "prerelease": false
   },
   "repository": "SEPC"

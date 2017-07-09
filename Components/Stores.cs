@@ -221,7 +221,6 @@ namespace SEPC.Components.Stores
                 CharacterStore.AddComponent(component);
             foreach (var component in collection.GridComponents)
                 GridStore.AddComponent(component);
-
         }
 
         /// <summary>

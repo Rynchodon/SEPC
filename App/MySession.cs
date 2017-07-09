@@ -26,8 +26,6 @@ namespace SEPC.App
         public MySession() : base ()
         {
             Log.Entered();
-
-            // Set up resources that persist inside sessions
             ComponentSession.Open();
         }
 
@@ -75,9 +73,9 @@ namespace SEPC.App
         private void SessionClosed()
         {
             Log.Entered();
-
-            // Close resources that persist inside sessions
             ComponentSession.Close();
+
+            // Send close event to ComponentSession dependencies
             Profiler.Close();
             Logger.Close();
 

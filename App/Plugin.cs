@@ -1,6 +1,5 @@
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using Sandbox.ModAPI;
 using Sandbox.Game.World;
@@ -24,10 +23,6 @@ namespace SEPC.App
 
         private bool SessionAttached;
 
-        /// <remarks>
-        /// Skips inlining so the registrars correctly detect calling assembly.
-        /// </remarks>
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Init(object gameInstance)
         {
             // Set up resources that persist outside of sessions
@@ -42,8 +37,8 @@ namespace SEPC.App
                 SymbolRegistrar.SetProfileIfDefined();
 
                 // Register our SEPC-managed SessionComponents
-                ComponentRegistrar.AddComponents();
-                ComponentRegistrar.LoadOnInit(0);
+                ComponentRegistrar.AddComponents(Assembly.GetExecutingAssembly());
+                ComponentRegistrar.LoadOnInit(0, Assembly.GetExecutingAssembly());
             }
             catch (Exception error)
             {
