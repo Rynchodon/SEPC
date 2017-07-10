@@ -16,7 +16,7 @@
   ],
   "release": {
     "body_lines": [
-      "Debugging Networking",
+      "Logging imprvs while debugging networking",
     ],
     "prerelease": false
   },
