@@ -127,9 +127,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\BitStream.cs" />
     <Compile Include="Extensions\String.cs" />
     <Compile Include="Logging\Logable.cs" />
+    <Compile Include="Network\Messaging\Common.cs" />
+    <Compile Include="Network\Messaging\Messenger.cs" />
+    <Compile Include="Network\Messaging\HandlerRegistrar.cs" />
+    <Compile Include="Network\Sync\SyncdGrid.cs" />
+    <Compile Include="Network\RemoteTask.cs" />
+    <Compile Include="Network\Sync\ASync.cs" />
+    <Compile Include="Network\Sync\AValueSync.cs" />
+    <Compile Include="Network\Sync\FlagsValueSync.cs" />
+    <Compile Include="Network\Sync\StringBuilderSync.cs" />
+    <Compile Include="Network\Sync\TerminalButtonSync.cs" />
+    <Compile Include="Network\Sync\TypedValueSync.cs" />
+    <Compile Include="Network\Sync\UpdateEntityValue.cs" />
+    <Compile Include="Network\Sync\ValueSync.cs" />
+    <Compile Include="Network\TestRemoteTask.cs" />
     <Compile Include="Reflection\Helper.cs" />
+    <Compile Include="Threading\SessionLock.cs" />
     <Compile Include="World\Inventory\ItemCount.cs" />
     <Compile Include="World\Updates.cs" />
     <Compile Include="Collections\Deque.cs" />
@@ -155,6 +171,7 @@
     <Compile Include="App\MySession.cs" />
     <Compile Include="Threading\MainThread.cs" />
     <Compile Include="Threading\ThreadTracker.cs" />
+    <None Include="Network\Sync\Sync.snippet" />
     <None Include="Properties\VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
