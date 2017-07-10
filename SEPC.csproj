@@ -193,7 +193,7 @@
 if $(ConfigurationName) == Release ( 
   PluginManager ../../../plugin.json  publish=True
 ) else (
-  PluginManager ../../../plugin.json 
+  PluginManager ../../../plugin.json publish=True
   @REM  SEModBuilder start-se -r ../../..
 )
 </PostBuildEvent>
