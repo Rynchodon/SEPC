@@ -25,10 +25,13 @@ namespace SEPC.App
 
         public void Init(object gameInstance)
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            var version = assembly.GetName().Version;
+
             // Set up resources that persist outside of sessions
             ThreadTracker.SetGameThread();
 
-            Log.Entered();
+            Log.Log("Loading Plugin for SEPC version " + version);
 
             try
             {
@@ -37,8 +40,8 @@ namespace SEPC.App
                 SymbolRegistrar.SetProfileIfDefined();
 
                 // Register our SEPC-managed SessionComponents
-                ComponentRegistrar.AddComponents(Assembly.GetExecutingAssembly());
-                ComponentRegistrar.LoadOnInit(0, Assembly.GetExecutingAssembly());
+                ComponentRegistrar.AddComponents(assembly);
+                ComponentRegistrar.LoadOnInit(0, assembly);
             }
             catch (Exception error)
             {

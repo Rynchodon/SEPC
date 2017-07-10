@@ -191,10 +191,10 @@
     <PostBuildEvent>SEModBuilder kill-se -r ../../..
 
 if $(ConfigurationName) == Release ( 
-  PluginManager ../../../plugin.json  publish=True
+  PluginManager ../../../plugin.json publish=True
 ) else (
   PluginManager ../../../plugin.json publish=True
-  @REM  SEModBuilder start-se -r ../../..
+  @REM SEModBuilder start-se -r ../../..
 )
 </PostBuildEvent>
   </PropertyGroup>

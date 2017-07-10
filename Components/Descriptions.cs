@@ -144,6 +144,8 @@ namespace SEPC.Components.Descriptions
     /// </summary>
     public abstract class ComponentDescription
     {
+        protected static readonly Logable Log = new Logable("SEPC.Components.Descriptions");
+
         protected struct ComponentEventMethod
         {
             public readonly Assembly Assembly;
@@ -263,6 +265,7 @@ namespace SEPC.Components.Descriptions
 
         public bool ShouldRunOn(RunLocation location)
         {
+            Log.Trace($"Does component RunsOn {RunsOn} apply to {location} ? {(RunsOn & location) != 0}");
             return (RunsOn & location) != 0;
         }
 
@@ -276,6 +279,8 @@ namespace SEPC.Components.Descriptions
         /// </summary>
         public bool TryCreateInstance(RunLocation runningOn, object attachedTo, out ComponentInstanceDescription result)
         {
+            Log.Entered();
+
             result = null;
             if (!ShouldRunOn(runningOn)) return false;
 
@@ -302,6 +307,8 @@ namespace SEPC.Components.Descriptions
                     Notification.Notify($"Error instantiating {ComponentClass.FullName}.", 10000, Severity.Level.ERROR);
                 return false;
             }
+
+            Log.Debug("Created instance of " + ComponentClass);
 
             result = new ComponentInstanceDescription()
             {

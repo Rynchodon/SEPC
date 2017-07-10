@@ -21,9 +21,9 @@ namespace SEPC.Components
     /// </summary>
     public class ComponentSession
     {
-        private static ComponentCollectionStore ComponentStore;
-        private static LockedDeque<Action> ExternalRegistrations;
-        private static RunStatus Status;
+        static ComponentCollectionStore ComponentStore;
+        static LockedDeque<Action> ExternalRegistrations;
+        static RunStatus Status;
 
         #region Registration and event raising
 
