@@ -45,6 +45,7 @@ namespace SEPC.Network.Messaging
         /// </summary>
         public static void Register(ushort domainId, ushort typeId, MessageHandler handler)
         {
+            Log.Trace($"Registering handler for domainId: {domainId} & typeId: {typeId}");
             Static?.AddHandler(domainId, typeId, handler);
         }
 

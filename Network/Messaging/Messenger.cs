@@ -74,10 +74,9 @@ namespace SEPC.Network.Messaging
 
         static void Send(BitStream data, ushort domainId, ushort typeId, MessageDestination dest, ulong destId = 0, bool reliable = true)
         {
+            Log.Trace($"Sending {data.ByteLength} bytes to {dest}/{destId}/{domainId}/{typeId}");
             ulong senderId = (MyAPIGateway.Session.Player != null) ? MyAPIGateway.Session.Player.SteamUserId : 0;
             byte[] bytes = FormatMessage(data, domainId, typeId, senderId);
-
-            Log.Trace("Sending packet of length " + bytes.Length);
 
             MainThread.TryOnMainThread(() =>
             {

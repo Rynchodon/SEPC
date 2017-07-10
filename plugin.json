@@ -16,11 +16,9 @@
   ],
   "release": {
     "body_lines": [
-      "Components registration must provide assembly to avoid tail recursion issues",
-      "Includes library comments in SEPC.xml",
-      "Initial Networking",
+      "Debugging Networking",
     ],
-    "prerelease": true
+    "prerelease": false
   },
   "repository": "SEPC"
 }
