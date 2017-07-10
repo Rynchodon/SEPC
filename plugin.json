@@ -4,22 +4,23 @@
     {
       "source": "SEPC.dll"
     },
-	{
+    {
       "source": "SEPC.xml"
     },
-	{
+    {
       "source": "README.md"
     },
-	{
+    {
       "source": "LICENSE.txt"
     },
   ],
   "release": {
     "body_lines": [
-	  "Components registration must provide assembly to avoid tail recursion issues",
-	  "Includes library comments in SEPC.xml",
-	],
-    "prerelease": false
+      "Components registration must provide assembly to avoid tail recursion issues",
+      "Includes library comments in SEPC.xml",
+      "Initial Networking",
+    ],
+    "prerelease": true
   },
   "repository": "SEPC"
 }
