@@ -20,18 +20,27 @@ namespace SEPC.App
 
         private bool SessionClosedAttached;
         private bool IsUpdatingStopped;
+        private bool IsComponentSessionOpened;
 
         #region MySessionComponentBase hooks
 
         public MySession() : base ()
         {
             Log.Entered();
-            ComponentSession.Open();
+            // Move this to delayed initialization, seems to happen multiple times at start
+            // ComponentSession.Open();
         }
 
         public override void UpdateAfterSimulation()
         {
             base.UpdateAfterSimulation();
+
+            // Do delayed initialization, seems like only one of the created components receives updates
+            if (!IsComponentSessionOpened)
+            {
+                ComponentSession.Open();
+                IsComponentSessionOpened = true;
+            }
 
             if (IsUpdatingStopped)
                 UpdatingResumed();

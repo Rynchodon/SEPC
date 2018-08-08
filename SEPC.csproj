@@ -146,7 +146,6 @@
     <Compile Include="Network\TestRemoteTask.cs" />
     <Compile Include="Reflection\Helper.cs" />
     <Compile Include="Threading\SessionLock.cs" />
-    <Compile Include="World\Inventory\ItemCount.cs" />
     <Compile Include="World\Updates.cs" />
     <Compile Include="Collections\Deque.cs" />
     <Compile Include="Collections\LockedDictionary.cs" />
@@ -184,18 +183,18 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>SEModBuilder git-version -r ../../..
+    <PreBuildEvent>@REM SEModBuilder git-version -r ../../..
 </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>SEModBuilder kill-se -r ../../..
+    <PostBuildEvent>@REM SEModBuilder kill-se -r ../../..
 
-if $(ConfigurationName) == Release ( 
-  PluginManager ../../../plugin.json publish=True
-) else (
-  PluginManager ../../../plugin.json publish=True
-  @REM SEModBuilder start-se -r ../../..
-)
+@REM if $(ConfigurationName) == Release ( 
+@REM  PluginManager ../../../plugin.json publish=True
+@REM ) else (
+@REM  PluginManager ../../../plugin.json
+@REM  @REM SEModBuilder start-se -r ../../..
+@REM )
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

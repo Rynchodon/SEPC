@@ -23,6 +23,7 @@ namespace SEPC.Components
     {
         static ComponentCollectionStore ComponentStore;
         static LockedDeque<Action> ExternalRegistrations;
+        static Logable Log = new Logable("SEPC.Components");
         static RunStatus Status;
 
         #region Registration and event raising
@@ -86,7 +87,7 @@ namespace SEPC.Components
         /// </summary>
         public static void Open()
         {
-            Logger.DebugLog("Components.Session.SessionOpened()");
+            Log.Entered();
             Status = RunStatus.NotInitialized;
         }
 
@@ -114,7 +115,7 @@ namespace SEPC.Components
             }
             catch (Exception error)
             {
-                Logger.Log("Error: " + error, Severity.Level.FATAL);
+                Log.Error(error);
                 Status = RunStatus.Terminated;
             }
         }
@@ -125,7 +126,7 @@ namespace SEPC.Components
         /// </summary>
         public static void Close()
         {
-            Logger.DebugLog("Terminating");
+            Log.Entered();
 
             if (ComponentStore != null)
                 ComponentStore.RaiseSessionEvent(ComponentEventNames.SessionClose);

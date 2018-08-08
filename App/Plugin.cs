@@ -52,8 +52,9 @@ namespace SEPC.App
         public void Update()
         {
             // Detect when the session has started and re-register MySession
-            if (!SessionAttached)
-                TryAttachSession();
+            // Actually seems to be handled now because session is attached by SE natively
+            // if (!SessionAttached)
+            //    TryAttachSession();
         }
 
         public void Dispose()

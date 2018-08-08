@@ -16,21 +16,37 @@ namespace SEPC.Extensions
         /// <summary> Writes a given string to the BitStream.</summary>
         public static void WriteString(this BitStream stream, string toWrite)
         {
-            //char[] chars = toWrite.ToCharArray();
-            //stream.WriteInt32(chars.Length);
-            //chars.ForEach(c => stream.WriteChar(c));
             stream.WritePrefixLengthString(toWrite, 0, toWrite.Length, Encoding.UTF8);
         }
 
         /// <summary>Reads and returns a string from the BitStream.</summary>
         public static string ReadString(this BitStream stream)
         {
-            //char[] result = new char[stream.ReadInt32()];
-            //for (int index = 0; index < result.Length; index++)
-            //    result[index] = stream.ReadChar();
-            //return new string(result);
             return stream.ReadPrefixLengthString(Encoding.UTF8);
         }
+
+        /// <summary> Serializes a string with the BitStream.</summary>
+        public static void Serialize(this BitStream stream, ref string toSerialize)
+        {
+            if (stream.Reading)
+                stream.WriteString(toSerialize);
+            else
+                toSerialize = stream.ReadString();
+        }
+
+        /*
+        /// <summary>Writes a given enum derived from byte to the BitStream.</summary>
+        public static void WriteByteEnum(this BitStream stream, Enum toWrite)
+        {
+            stream.WriteByte(Convert.ToByte(toWrite));
+        }
+
+        /// <summary>Writes a given enum derived from byte to the BitStream.</summary>
+        public static void ReadByteEnum<TEnum>(this BitStream stream, ref TEnum toWrite) where TEnum : IConvertible
+        {
+            toWrite = stream.ReadByte();
+        }
+        */
 
         /// <summary>Returns a new byte[] from the stream's contents.</summary>
         public static byte[] ToBytes(this BitStream stream)
